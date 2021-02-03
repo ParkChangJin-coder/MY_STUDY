@@ -1,0 +1,550 @@
+﻿<!DOCTYPE html5>
+ <html lang="ko">
+  <head>
+   <title>CBM 계산기 ver. 1.3.3</title>
+   <style>
+    body {
+    	width : 1050px;
+    	}
+    table {
+           border-radius: 10px;
+           border : 2px solid #444444;
+           margin-right : 2px;
+          }
+   </style> 
+  </head>
+   <body onload='my_init()'>
+
+    <script type = "text/javascript">
+       var count = 1;     //카운트
+
+     //CBM 계산시작
+      function ccalculate(){
+        var ji = 0;
+        var jk = count * 3;
+        var cbmout;
+        var acbmout;
+        for(var jj = 1; jj < jk; jj += 3){
+        ji++; 
+        cbmout = eval('cbmout'+ji);
+        acbmout = eval('acbmout'+ji);
+        var tg = 1000;
+        var tx = Number(document.getElementById('leng'+jj).value);
+        var ty = Number(document.getElementById('leng'+[jj+1]).value);
+        var tz = Number(document.getElementById('leng'+[jj+2]).value);
+        var tq = Number(document.getElementById('qty'+[ji]).value);
+        var rs = (tx*0.001) * (ty*0.001) * (tz*0.001) * (tq) * (tg); //가로x세로x높이x수량
+        var ars = ((tx*0.1) * (ty*0.1) * (tz*0.1) / 6000) * (tq); //항공부피
+        cbmout.value = Number(rs.toFixed(0));
+        acbmout.value = Number(ars.toFixed(0));
+        if (tx == ""){
+             window.alert('가로 값을 입력해주세요')
+           } else if (ty == ""){
+             window.alert('세로 값을 입력해주세요')
+           } else if (tz == ""){
+             window.alert('높이 값을 입력해주세요')
+           }
+         }
+         //합계
+        var sum = 0;
+        var asum = 0;
+        for( jl=1; jl<=ji; jl++ ){
+         var result = Number(document.getElementById('cbmout'+jl).value);
+         var aresult = Number(document.getElementById('acbmout'+jl).value);
+          sum += result;
+          asum += aresult;
+          out1.value = (sum * 0.001).toFixed(2); // 
+          out6.value = asum.toFixed(0); //
+          }
+         }         
+        //CBM 계산 끝
+
+
+        //실중량 계산시작
+        function wcalculate(){
+        var wi = 0;
+        var wk = count * 3;
+        var whtout;
+        var gwhtout;
+        for(var wj = 1; wj < wk; wj += 3){
+        wi++; 
+        whtout = eval('wht'+ wi);
+        gwhtout = eval('gwht'+ wi);
+         var px = Number(document.getElementById('wei'+ wj).value);
+         var py = Number(document.getElementById('wei'+ (wj+1)).value);
+         var pz = Number(document.getElementById('wei'+ (wj+2)).value);
+         var rr = (parseInt(px) * parseInt(py))
+         var rt = rr + parseInt(pz);
+        whtout.value = Number(rr.toFixed(0));
+        gwhtout.value = Number(rt);         
+
+         if (px == ""){
+            window.alert('무게 값을 입력해주세요')
+          } else if (py == ""){
+            window.alert('수량 값을 입력해주세요')
+          } else if (pz == ""){
+            window.alert('포장무게 값을 입력해주세요')
+          } 
+         }
+        //합계
+        var wsum = 0;
+        var gwsum = 0;
+        for( wl=1; wl<=wi; wl++ ){
+         var wresult = Number(document.getElementById('wht'+wl).value);
+         var gwresult = Number(document.getElementById('gwht'+wl).value);
+          wsum += wresult;
+          gwsum += gwresult;
+          out2.value = wsum.toFixed(0); // 
+          nwout.value = gwsum.toFixed(0); //
+          }
+
+
+         }  
+        //실중량 계산 끝
+
+        //비교수식 계산
+         function compare(){
+          var rx = Number(out1.value) * 1000;
+          var ry = Number(nwout.value);
+
+          if(rx >= ry) {
+               out3.value = rx * 0.001;
+               out7.value = Math.ceil(rx * 0.001);
+           } else {
+               out3.value = ry;
+               out7.value = Math.ceil(ry * 0.001);
+           }
+         //비교수식 끝
+
+         //
+         //var ey = Number(document.getElementById('transp').value);
+         //var er = (ex * ey);
+         //out5.value = Number(er);
+         }
+     
+
+
+          var idx;
+          var obj_table;
+           function my_init() {
+           idx=0;
+           obj_table=document.all.mytable.cloneNode(true);
+         }
+           function add_table() {
+          if (idx<9) {  //제한
+             idx++;
+             for(var idy = 0; idy < 3; idy++){
+              idy = (idx * 3 );  
+             }
+             for(var idz = 0; idz < 3; idz++){
+              idz = idy;
+             }
+             for(var ida = 0; ida < 3; ida++){
+              ida = idz;
+             }
+             for(var idb = 0; idb < 3; idb++){
+              idb = idx + 1;
+              break;
+             }
+             eval("document.all.mytable"+(idx>1?idx-1:"")).insertAdjacentHTML("afterEnd",obj_table.outerHTML.replace("mytable","mytable"+idx).replace("leng1","leng"+idy).replace("leng2","leng"+idz).replace("leng3","leng"+ida).replace("qty1","qty"+idb).replace("cbmout1","cbmout"+idb).replace("acbmout1","acbmout"+idb).replace("wei1","wei"+idy).replace("wei2","wei"+idz).replace("wei3","wei"+ida).replace("wht1","wht"+idb).replace("gwht1","gwht"+idb).replace("unitp1","unitp"+idb));
+           }
+           count++; //클릭 수 카운트
+          }
+         function del_table() {
+           if (idx>0) {
+           eval("document.all.mytable"+idx).remove(true);
+           idx--;
+           count -= 1;
+           }
+          }
+
+       function crttable (){
+          var qi = (out2.value * 100).toFixed(0);
+          var qj = (nwout.value * 100).toFixed(0);
+          var qk = out1.value;
+          var nl = count * 3;
+          nm = 0;
+          test = new Array;
+          test = [];
+
+           var a = "Description of Goods     Q'ty of Box       N.W.       G.W.       Vol";
+           var c = "Result______________________________________________________________";
+           var d = "                                                    "+ qi + "       "+qj+"       "+qk
+          for(var nn = 1; nn < nl; nn+=3){
+           nm++;
+           var b = qa + "  x  " + qb + "  x  " + qc + "         " + qd +"("+ qe +")" + "            " + qf + "       " + qg + "       " + qh + "\n"
+           test.push(b);
+           
+           }
+           
+           alert(a+"\n"+test+"\n"+c+"\n"+d)
+        
+          }
+
+         function add_row(){
+
+          var removetbd = document.getElementById('tbody1');
+          while ( removetbd.hasChildNodes() ){
+               removetbd.removeChild(removetbd.firstChild);
+           }
+          var removetbd2 = document.getElementById('tbody2');
+          while ( removetbd2.hasChildNodes() ){
+               removetbd2.removeChild(removetbd2.firstChild);
+           }
+          var qta = 0;
+          var qtb = 0;
+          var qtyd = 0; 
+          var qtye = 0; 
+          var nl = count * 3;
+          nm = 0;
+          for(var nn = 1; nn < nl; nn+=3){
+           nm++;
+           var qa = Number(document.getElementById('leng'+[nn]).value);
+           var qb = Number(document.getElementById('leng'+[nn+1]).value);
+           var qc = Number(document.getElementById('leng'+[nn+2]).value);
+           var qd = document.getElementById('qty'+[nm]).value;
+           var qe = document.getElementById('wei'+[nn+1]).value;
+           var qf = document.getElementById('wht'+[nm]).value;        
+           var qg = document.getElementById('gwht'+[nm]).value;
+           var qh = document.getElementById('cbmout'+[nm]).value;
+           var qi = document.getElementById('acbmout'+[nm]).value;
+           var qj = document.getElementById('unitp'+[nm]).value;
+
+           var resultable = document.getElementById('tbody1');
+           var row = resultable.insertRow(resultable.rows.length);
+           var cell1 = row.insertCell(0);
+           var cell2 = row.insertCell(1);
+           var cell3 = row.insertCell(2);
+           var cell4 = row.insertCell(3);
+           var cell5 = row.insertCell(4);
+           var cell6 = row.insertCell(5);
+
+           cell1.classList.add('newone');
+           cell2.classList.add('newone');
+           cell3.classList.add('newone');
+           cell4.classList.add('newone');
+           cell5.classList.add('newone');
+           cell6.classList.add('newone');
+
+           cell1.innerHTML = (qa * 0.001).toFixed(1) + "x" + (qb * 0.001).toFixed(1) + "x" + (qc * 0.001).toFixed(1) ;
+           cell2.innerHTML = qd +"("+ qe +")" ;
+           cell3.innerHTML = qf;
+           cell4.innerHTML = qg;
+           cell5.innerHTML = (qh * 0.001).toFixed(2) ;
+           cell6.innerHTML = qi;
+
+           qta += Number(qd);
+           qtb += Number(qe);
+           qtyb.value = qta + "(" + qtb + ")"; 
+
+           
+           var resultable2 = document.getElementById('tbody2');
+           var row = resultable2.insertRow(resultable2.rows.length);
+           var cell1 = row.insertCell(0);
+           var cell2 = row.insertCell(1);
+           var cell3 = row.insertCell(2);
+           var cell4 = row.insertCell(3);
+           var cell5 = row.insertCell(4);
+           var cell6 = row.insertCell(5);
+           var cell7 = row.insertCell(6);
+
+           cell1.innerHTML = '';
+           cell2.innerHTML = '';
+           cell3.innerHTML = Number(qe);
+           cell4.innerHTML = '';
+           cell5.innerHTML = Number(qj);
+           cell6.innerHTML = '';
+           cell7.innerHTML = Number(qe) * Number(qj);
+
+           qtyc.value = qtb;
+
+  
+           qtyd += Number(qj); 
+           unitpp.value = '$ ' + qtyd; 
+
+           qtye += Number(qe) * Number(qj);
+           amountt.value = '$ ' + qtye;
+           amounttt.value = qtye;
+
+          }
+         }
+         
+          function delete_row(){
+           var resultable = document.getElementById('resulttable');
+           if (resultable.rows.length < 1) return;
+           resultable.deleteRow(resulttable.rows.length-1);
+           }   
+
+          function cifcal(){
+          //INVOICE 계산시작
+          var iy = Number(amounttt.value);
+          var iz = Number(curr.value);
+          inv.value = (iy * iz);
+          //INVOICE 끝
+
+          //CFS+THC+WFG 계산시작
+          var cx = document.getElementById('ctw').value;
+          var cy = Number(out7.value);
+          out8.value = (cx * cy);
+          //CFS+THC+WFG 계산끝
+
+          //AFR, DOC 계산시작
+          out9.value = (Number(30) * iz);
+          out10.value = document.getElementById('doc').value;
+          //AFR, DOC 계산끝
+
+          //해상운임 시작
+          out11.value = (Number(20) * iz * Number(out7.value));
+          //해상운임 끝
+
+          //보험 시작
+          var ix = Number(inv.value);
+          var iy = Number(ix * 1.1 * 0.00043)
+          var iz = Number(ix * 1.1 * 0.0008)
+          if(iy <= 14000){
+             out12.value = "14000"; //INVOIVE X 1.1 X 보험료 0.043%
+            } else {
+             out12.value = iz;  //INVOIVE X 1.1 X 보험료 0.08%  
+            }
+           //보험 끝
+
+           //AMOUNT 계산시작
+           var aa = Number(out8.value);
+           var ab = Number(out9.value);
+           var ac = Number(out10.value);
+           var ad = Number(out11.value);
+           var ae = Number(out12.value);
+           out13.value = (aa + ab + ac + ad + ae);
+           //AMOUNT 계산 끝
+
+           //내륙운임 시작
+           out14.value = Number(tbil.value);
+           //내륙운임 끝
+
+           //통관 시작
+           var ux = (ix * 0.0015)
+           if(ux <= 16000){
+               out15.value = Number(16000);
+             } else {
+               out15.value = Number(ux);
+             }
+            //통관 끝
+
+           //TOTAL 시작
+           var ba = Number(out13.value);
+           var bb = Number(out14.value);
+           var bc = Number(out15.value);
+           out16.value = (ba + bb + bc);
+           //TOTAL 끝
+          }
+
+       function LayerView(){
+          layerID.style.visibility="visible";
+         }
+       function LayerHiding(){
+          layerID.style.visibility="hidden";
+         }
+
+
+      //네이버 환율 페이지 연결
+        function naverexch(){
+           window.open("https://finance.naver.com/marketindex/exchangeDetail.nhn?marketindexCd=FX_USDKRW", "newWindow");
+           }
+
+      //연결 끝
+
+    </script>
+
+    CBM 운임 계산기 Ver. 1.3.3 Beta
+     <br></br><Input style='height: 30px; width:100;' type=button value='테이블 추가' onclick='add_table();'> <Input style='height: 30px; width:100; ' type=button value='테이블 삭제' onclick='del_table();'> 
+
+        	   
+    <table style="padding-bottom: 2px; margin-bottom: 15px; margin-top: 15px; visibility:visible;" id = mytable>
+      <thead>
+       <tr>
+        <th>CBM 부피
+        	   <input style = "visibility:hidden; width:1px; color:gray; border:none;" type = 'text' id = 'cbmout1' value = "CBM" readonly = "readonly" tabindex = "-1">
+        	   <input style = "visibility:hidden; width:1px; color:gray; border:none;" type = 'text' id = 'acbmout1' value= "항공무게" readonly = "readonly" tabindex = "-1">
+        	   <input style = "visibility:hidden; width:1px; color:gray; border:none;" type = 'text' id = 'wht1' value = "N.W." readonly = "readonly" tabindex = "-1">
+        	   <input style = "visibility:hidden; width:1px; color:gray; border:none;" type = 'text' id = 'gwht1' value= "G.W." readonly = "readonly" tabindex = "-1">
+        </th>
+       </tr>
+      </thead>
+      <tbody>
+        <tr>
+         <td>가로: <input style = "font-size:1.2em;" type = 'number' id = 'leng1' value= ""> mm</td>
+        </tr>
+         <tr>
+         <td>세로: <input style = "font-size:1.2em;" type = 'number' id = 'leng2' value= ""> mm</td>
+        </tr>
+         <tr>
+         <td>높이: <input style = "font-size:1.2em;" type = 'number' id = 'leng3' value= ""> mm</td>
+        </tr>
+         <tr>
+         <td>수량: <input style = "font-size:1.2em;" type = 'number' id = 'qty1' value= ""> 개</td>
+        </tr>
+       <tr>
+        <th>Weight 실중량</th>
+       </tr>
+         <tr>
+         <td>무게: <input style = "font-size:1.2em;" type = 'number' id = 'wei1' value= ""> kg</td>
+        </tr>
+         <tr>
+         <td>수량: <input style = "font-size:1.2em;" type = 'number' id = 'wei2' value= ""> 개</td>
+        </tr>
+         <tr>
+         <td>포장: <input style = "font-size:1.2em;" type = 'number' id = 'wei3' value= ""> kg</td>
+        </tr>
+       <tr>
+        <th>UNIT PRICE</th>
+       </tr>
+        <tr>
+         <td>단가: <input style = "font-size:1.2em;" type = 'number' id = 'unitp1' value= ""> $</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <table style="padding-bottom: 2px; margin-bottom: 15px; margin-left : 150 px; border:none;">
+      <thead>
+      </thead>
+      <tbody>
+        <tr>
+        <td style ="width: 100px;"></td>
+        </tr>
+        <tr>
+        <td style="float: right; margin-left: 150px;"><input style="width: 172px; height:35px;" type = 'button' id = 'ccal' value = '결과 값 내놔라' onclick= 'ccalculate();wcalculate();add_row();compare(); cifcal();'></td>
+        </tr>
+        <tr>
+      </tbody>
+    </table>
+
+    <table style = "margin-top:15px; text-align:right;" id = 'resulttable'>
+     <thead>
+        <tr>
+        <th style = "text-align:left;">REP PL</th>
+        <td>C.W.</td>
+        <td><input style = 'font-size:1.2em; border:none; width : 70px' type = 'text' id = 'out3' value= "" readonly="readonly"></td>
+       </tr>
+         <tr>
+          <td style = "text-align:left;">Goods</td>
+          <td>Box</td>
+          <td>N.W.</td>
+          <td>G.W.</td>
+          <td>Vol</td>
+          <td>항공</td>
+         </tr>
+      </thead>
+       <tbody style = "text-align:right;" id = "tbody1">
+       	  </tbody>
+            <tr>
+              <td style = "font-size:1.2em; text-align:left;">RESULT</td>
+              <td><input style = "width:70px; border:none; font-size:1.2em; text-align:right;" type = 'text' id = 'qtyb' value= "" readonly="readonly"></td>
+              <td><input style = "width:70px; border:none; font-size:1.2em; text-align:right;" type = 'text' id = 'out2' value= "" readonly="readonly"></td>
+              <td><input style = "width:70px; border:none; font-size:1.2em; text-align:right;" type = 'text' id = 'nwout' value= "" readonly="readonly"></td>
+              <td><input style = "width:70px; border:none; font-size:1.2em; text-align:right;" type = 'text' id = 'out1' value= "" readonly= "readonly"></td>
+              <td><input style = "width:70px; border:none; font-size:1.2em; text-align:right;" type = 'text' id = 'out6' value= "" readonly= "readonly"></td>
+           </tr>
+
+    </table>
+
+    <table style = "margin-top:15px; width:350px;" id = 'resulttable2'>
+     <thead>
+        <tr>
+        <th>REP CI </th>
+        <td><input style = "visibility:hidden; width:1px;" type = 'text' id = 'amounttt' value= "" readonly = "readonly"></td>
+        <td></td>
+       </tr>
+         <tr>
+          <td>Goods</td>
+          <td></td>
+          <td style = "text-align:right;">Q'ty</td>
+          <td style = "text-align:right;"></td>
+          <td style = "text-align:right;">Unit Price</td>
+          <td style = "text-align:right;" colspan="2">Amount</td>
+         </tr>
+      </thead>
+       <tbody style = "text-align: right;" id = "tbody2">
+       </tbody>
+            <tr style = "text-align: right;">
+              <td style = "text-align: left; font-size:1.2em;">RESULT</td>
+              <td></td>
+              <td><input style = "text-align: right; width:70px; border:none; font-size:1.2em;" type = 'text' id = 'qtyc' value= "" readonly="readonly"></td>
+              <td><input style = "text-align: right; width:15px; border:none; font-size:1.2em;" text-align:right;" type = 'text' id = '' value= "" readonly="readonly"></td>
+              <td><input style = "text-align: right; width:70px; border:none; font-size:1.2em;" type = 'text' id = 'unitpp' value= "" readonly="readonly"></td>
+              <td><input style = "text-align: right; width:15px; border:none; font-size:1.2em;" text-align:right;" type = 'text' id = '' value= "" readonly= "readonly"></td>
+              <td><input style = "text-align: right; width:70px; border:none; font-size:1.2em;" type = 'text' id = 'amountt' value= "" readonly= "readonly"></td>
+           </tr>
+    </table>
+   
+   <table style="padding-bottom: 2px; margin-bottom: 15px; width: 350px; margin-top: 10px;">
+      <thead>
+       <tr>
+        <th colspan="3">CIF (KOBE) </th>
+       </tr>
+      </thead>
+      <tbody>
+         <tr>
+         <td>환율</td>
+         <td><input style = "width:50%; float:left;" type = 'button' value= "환율 보기" onclick='naverexch()';>
+             <input style = "width:40%; float:right;" type = 'number' id = 'curr' value= "1150"></td>
+         <td></td>
+        </tr>
+        <tr>
+         <td style="width: 150px">INVOICE</td>
+         <td style="width: 150px"><input type = 'text' id = 'inv' value= ""></td>
+        </tr>
+         <tr>
+         <td>CBM</td>
+         <td><input style = "width:45%; float:left;" type = 'number' id = 'out7' value= "">
+             <input style = "width:45%; float:right;" type = 'number' id = '' value= ""></td>
+        </tr>
+         <tr>
+         <td>CFS+THC+WFG</td>
+         <td><input style = "width:45%; float:left;" type = 'number' id = 'ctw' value= "13000">
+             <input style = "width:45%; float:right;" type = 'number' id = 'out8' value= ""></td>
+        </tr>
+         <tr>
+         <td>AFR($30)</td>
+         <td><input style = "width:45%; float:left;" type = 'text' id = 'afr' value= "$30">
+             <input style = "width:45%; float:right;" type = 'number' id = 'out9' value= ""></td>
+        </tr>
+         <tr>
+         <td>DOC(40,000)</td>
+         <td><input style = "width:45%; float:left;" type = 'number' id = 'doc' value= "40000">
+             <input style = "width:45%; float:right;" type = 'number' id = 'out10' value= ""></td>
+        </tr>
+         <tr>
+         <td>해상운임</td>
+         <td><input style = "width:45%; float:left;" type = 'text' id = 'sbil' value= "$20">
+             <input style = "width:45%; float:right;" type = 'number' id = 'out11' value= ""></td>
+        </tr>
+         <tr>
+         <td>보험</td>
+         <td><input style = "width:45%; float:left;" type = 'number' id = 'ins' value= "">
+             <input style = "width:45%; float:right;" type = 'number' id = 'out12' value= ""></td>
+        </tr>
+         <tr>
+         <td>AMOUNT</td>
+         <td><input style = "width:45%; float:left;" type = 'number' id = 'amt' value= "">
+             <input style = "width:45%; float:right;" type = 'number' id = 'out13' value= ""></td>
+        </tr>
+         <tr>
+         <td>내륙운임</td>
+         <td><input style = "width:45%; float:left;" type = 'number' id = 'tbil' value= "100000">
+             <input style = "width:45%; float:right;" type = 'number' id = 'out14' value= ""></td>
+        </tr>
+         <tr>
+         <td>통관</td>
+         <td><input style = "width:45%; float:left;" type = 'number' id = 'tg' value= "">
+             <input style = "width:45%; float:right;" type = 'number' id = 'out15' value= ""></td>
+        </tr>
+         <tr>
+         <td style = "border-top: 1px;">TOTAL</td>
+         <td><input style = "width:45%; float:left;" type = 'number' id = 'total' value= "">
+             <input style = "width:45%; float:right;" type = 'number' id = 'out16' value= ""></td>
+        </tr>
+      </tbody>
+     </table>
+
+   </body>
+  </html>
